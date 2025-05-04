@@ -24,13 +24,15 @@ CPU_THRESHOLD = int(os.getenv("CPU_THRESHOLD"))
 MEMORY_THRESHOLD = int(os.getenv("MEMORY_THRESHOLD"))
 TEMP_THRESHOLD = int(os.getenv("TEMP_THRESHOLD"))
 TEMP_CRITICAL = int(os.getenv("TEMP_CRITICAL"))
+STORAGE_THRESHOLD = int(os.getenv("STORAGE_THRESHOLD", "80"))  # Valeur par défaut si non spécifiée
 MONITORED_SERVER = os.getenv("MONITORED_SERVER")
 
 # Dictionnaire pour stocker les dernières alertes envoyées
 last_alerts = {
     "cpu": None,
     "memory": None,
-    "temperature": None
+    "temperature": None,
+    "storage": None
 }
 
 # Délai minimum entre les alertes (en secondes)
@@ -94,6 +96,19 @@ def check_resources():
         send_email("Alerte: Usage élevé de la mémoire", f"La mémoire est à {memory.percent}% ! Seuil: {MEMORY_THRESHOLD}%")
         update_last_alert("memory")
 
+
+    # Vérification de l'utilisation du stockage
+
+    disk_usage = psutil.disk_usage('/')
+    if disk_usage.percent > STORAGE_THRESHOLD and should_send_alert("storage"):
+        send_email("Alerte: Espace disque faible", 
+                  f"L'utilisation du disque est à {disk_usage.percent}% ! Seuil: {STORAGE_THRESHOLD}%\n"
+                  f"Espace utilisé: {disk_usage.used / (1024**3):.2f} Go\n"
+                  f"Espace total: {disk_usage.total / (1024**3):.2f} Go\n"
+                  f"Espace libre: {disk_usage.free / (1024**3):.2f} Go")
+        update_last_alert("storage")
+
+
     # Vérification de la température (si supportée)
     try:
         temperature = psutil.sensors_temperatures().get('cpu_thermal', [])
@@ -123,6 +138,7 @@ def main():
     # Collecte des données initiales
     cpu_usage = psutil.cpu_percent(interval=1)
     memory = psutil.virtual_memory()
+    disk_usage = psutil.disk_usage('/')
 
     temperature_info = "Température CPU non disponible"
     try:
@@ -137,6 +153,10 @@ Serveur surveillé: {MONITORED_SERVER}
 État initial du système:
 - CPU: {cpu_usage}% (seuil d'alerte: {CPU_THRESHOLD}%)
 - Mémoire: {memory.percent}% (seuil d'alerte: {MEMORY_THRESHOLD}%)
+- Espace disque: {disk_usage.percent}% (seuil d'alerte: {STORAGE_THRESHOLD}%)
+- Espace utilisé: {disk_usage.used / (1024**3):.2f} Go
+- Espace total: {disk_usage.total / (1024**3):.2f} Go
+- Espace libre: {disk_usage.free / (1024**3):.2f} Go
 - Température: {temperature_info} (seuil d'alerte: {TEMP_THRESHOLD}°C, critique: {TEMP_CRITICAL}°C)
     """
     print(initial_message)

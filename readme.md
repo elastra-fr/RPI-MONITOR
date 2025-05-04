@@ -1,7 +1,7 @@
 
 # RPI Monitor (French)  
 
-Ce projet est un moniteur ressources utilisé sur Raspberry Pi qui surveille l'utilisation du CPU, de la mémoire et de la température. Il envoie un e-mail d'alerte si l'une de ces valeurs dépasse un seuil prédéfini et éteint le Raspberry Pi si la température dépasse un seuil critique.
+Ce projet est un moniteur ressources utilisé sur Raspberry Pi qui surveille l'utilisation du CPU, de la mémoire, du stockage et de la température. Il envoie un e-mail d'alerte si l'une de ces valeurs dépasse un seuil prédéfini et éteint le Raspberry Pi si la température dépasse un seuil critique.
 
 
 ## Créer un .env
@@ -17,6 +17,7 @@ CPU_THRESHOLD=80
 MEMORY_THRESHOLD=80
 TEMP_THRESHOLD=70
 TEMP_CRITICAL=85
+STORAGE_THRESHOLD=80
 
 ### Configuration du serveur SMTP
 SMTP_SERVER=
@@ -58,7 +59,7 @@ python monitor.py
 
 # RPI Monitor (English)
 
-This project is a resource monitor used on Raspberry Pi that monitors CPU, memory, and temperature usage. It sends an alert email if any of these values exceed a predefined threshold and shuts down the Raspberry Pi if the temperature exceeds a critical threshold.
+This project is a resource monitor used on Raspberry Pi that monitors CPU, memory, storage and temperature usage. It sends an alert email if any of these values exceed a predefined threshold and shuts down the Raspberry Pi if the temperature exceeds a critical threshold.
 
 ## Create a .env
 
@@ -76,6 +77,7 @@ CPU_THRESHOLD=80
 MEMORY_THRESHOLD=80
 TEMP_THRESHOLD=70
 TEMP_CRITICAL=85
+STORAGE_THRESHOLD=80
 
 ### SMTP server configuration
 
