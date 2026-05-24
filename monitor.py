@@ -148,8 +148,27 @@ def main():
     except AttributeError:
         pass
 
+    net_addrs = psutil.net_if_addrs()
+    if 'eth0' in net_addrs:
+        connection_type = 'Ethernet'
+        active_iface = 'eth0'
+    elif 'wlan0' in net_addrs:
+        connection_type = 'Wi-Fi'
+        active_iface = 'wlan0'
+    else:
+        connection_type = 'Inconnu'
+        active_iface = None
+
+    ip_address = 'N/A'
+    if active_iface:
+        for addr in net_addrs[active_iface]:
+            if addr.family == 2:  # AF_INET (IPv4)
+                ip_address = addr.address
+                break
+
     initial_message = f"""Le script de surveillance des ressources a démarré.
 Serveur surveillé: {MONITORED_SERVER}    
+
 État initial du système:
 - CPU: {cpu_usage}% (seuil d'alerte: {CPU_THRESHOLD}%)
 - Mémoire: {memory.percent}% (seuil d'alerte: {MEMORY_THRESHOLD}%)
@@ -158,6 +177,11 @@ Serveur surveillé: {MONITORED_SERVER}
 - Espace total: {disk_usage.total / (1024**3):.2f} Go
 - Espace libre: {disk_usage.free / (1024**3):.2f} Go
 - Température: {temperature_info} (seuil d'alerte: {TEMP_THRESHOLD}°C, critique: {TEMP_CRITICAL}°C)
+
+Réseau:
+- Adresse IP: {ip_address}
+- Mode de connexion: {connection_type}
+
     """
     print(initial_message)
     send_email("Démarrage du script", initial_message)

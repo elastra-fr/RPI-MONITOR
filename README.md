@@ -4,74 +4,88 @@
 Ce projet est un moniteur ressources utilisé sur Raspberry Pi qui surveille l'utilisation du CPU, de la mémoire, du stockage et de la température. Il envoie un e-mail d'alerte si l'une de ces valeurs dépasse un seuil prédéfini et éteint le Raspberry Pi si la température dépasse un seuil critique.
 
 
-## Créer un .env
+## Installation (Raspberry Pi)
 
-Vous devez créer un fichier `.env` à la racine du projet avec les variables d'environnement suivantes :
+```bash
+git clone <repo-url>
+cd RPI-MONITOR
+pip3 install -r requirements.txt
+chmod +x setup.sh
+./setup.sh
+```
 
-### Informations d'email
+`setup.sh` crée le `.env` interactivement et propose d'installer un service systemd pour le lancement automatique au démarrage.
+
+> Si un `.env` existe déjà, il ne sera pas écrasé.
+
+---
+
+## Installation manuelle
+
+### 1. Créer le `.env`
+
+Créer un fichier `.env` à la racine du projet :
+
+```env
 SENDER_EMAIL=
 SENDER_PASSWORD=
 RECIPIENT_EMAIL=
-### Paramètres de surveillance
+SMTP_SERVER=
+SMTP_PORT=
+
 CPU_THRESHOLD=80
 MEMORY_THRESHOLD=80
 TEMP_THRESHOLD=70
 TEMP_CRITICAL=85
 STORAGE_THRESHOLD=80
 
-### Configuration du serveur SMTP
-SMTP_SERVER=
-SMTP_PORT=
+MONITORED_SERVER=
+```
 
-###Nom du serveur
-MONITORED_SERVER= 
+### 2. Environnement virtuel (optionnel)
 
-
-
-## Créer l'environnement virtuel
-
-### Windows
-
-
-python -m venv env
-
-
-### Linux
-
+```bash
 python3 -m venv env
-
-## Activer l'environnement virtuel
-
-# Windows
-.\env\Scripts\activate
-
-# Rpi Linux
-
 source env/bin/activate
-
-## Installer les dépendances
-
 pip install -r requirements.txt
+```
 
-## Exécuter le script
+### 3. Lancer le script
 
-python monitor.py
+```bash
+python3 monitor.py
+```
 
 # RPI Monitor (English)
 
 This project is a resource monitor used on Raspberry Pi that monitors CPU, memory, storage and temperature usage. It sends an alert email if any of these values exceed a predefined threshold and shuts down the Raspberry Pi if the temperature exceeds a critical threshold.
 
-## Create a .env
+## Installation (Raspberry Pi)
 
-You need to create a `.env` file at the root of the project with the following environment variables:
+```bash
+git clone <repo-url>
+cd RPI-MONITOR
+pip3 install -r requirements.txt
+chmod +x setup.sh
+./setup.sh
+```
 
-### Email information
+`setup.sh` creates the `.env` interactively and offers to install a systemd service for automatic startup.
 
+> An existing `.env` will not be overwritten.
+
+---
+
+## Manual installation
+
+### 1. Create `.env`
+
+```env
 SENDER_EMAIL=
 SENDER_PASSWORD=
 RECIPIENT_EMAIL=
-
-### Monitoring parameters
+SMTP_SERVER=
+SMTP_PORT=
 
 CPU_THRESHOLD=80
 MEMORY_THRESHOLD=80
@@ -79,43 +93,22 @@ TEMP_THRESHOLD=70
 TEMP_CRITICAL=85
 STORAGE_THRESHOLD=80
 
-### SMTP server configuration
-
-SMTP_SERVER=
-SMTP_PORT=
-
-### Server name
-
 MONITORED_SERVER=
+```
 
-## Create the virtual environment
+### 2. Virtual environment (optional)
 
-### Windows
-
-python -m venv env
-
-### Linux
-
+```bash
 python3 -m venv env
-
-## Activate the virtual environment
-
-# Windows
-
-.\env\Scripts\activate
-
-# Rpi Linux
-
 source env/bin/activate
-
-## Install dependencies
-
 pip install -r requirements.txt
+```
 
+### 3. Run
 
-## Run the script
-
-python monitor.py
+```bash
+python3 monitor.py
+```
 
 ## License
 
