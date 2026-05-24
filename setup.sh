@@ -3,43 +3,41 @@
 ENV_FILE=".env"
 
 if [ -f "$ENV_FILE" ]; then
-    echo "Le fichier .env existe déjà. Abandon."
-    exit 0
-fi
+    echo "Le fichier .env existe déjà, configuration ignorée."
+else
+    echo "=== Configuration du moniteur RPI ==="
+    echo ""
 
-echo "=== Configuration du moniteur RPI ==="
-echo ""
+    # Email
+    read -p "Email expéditeur           : " SENDER_EMAIL
+    read -s -p "Mot de passe expéditeur    : " SENDER_PASSWORD
+    echo ""
+    read -p "Email destinataire         : " RECIPIENT_EMAIL
+    read -p "Serveur SMTP               : " SMTP_SERVER
+    read -p "Port SMTP (ex: 587)        : " SMTP_PORT
 
-# Email
-read -p "Email expéditeur           : " SENDER_EMAIL
-read -s -p "Mot de passe expéditeur    : " SENDER_PASSWORD
-echo ""
-read -p "Email destinataire         : " RECIPIENT_EMAIL
-read -p "Serveur SMTP               : " SMTP_SERVER
-read -p "Port SMTP (ex: 587)        : " SMTP_PORT
+    echo ""
+    echo "=== Seuils d'alerte ==="
 
-echo ""
-echo "=== Seuils d'alerte ==="
+    read -p "Seuil CPU en %       [80]  : " CPU_THRESHOLD
+    CPU_THRESHOLD=${CPU_THRESHOLD:-80}
 
-read -p "Seuil CPU en %       [80]  : " CPU_THRESHOLD
-CPU_THRESHOLD=${CPU_THRESHOLD:-80}
+    read -p "Seuil mémoire en %   [80]  : " MEMORY_THRESHOLD
+    MEMORY_THRESHOLD=${MEMORY_THRESHOLD:-80}
 
-read -p "Seuil mémoire en %   [80]  : " MEMORY_THRESHOLD
-MEMORY_THRESHOLD=${MEMORY_THRESHOLD:-80}
+    read -p "Seuil stockage en %  [80]  : " STORAGE_THRESHOLD
+    STORAGE_THRESHOLD=${STORAGE_THRESHOLD:-80}
 
-read -p "Seuil stockage en %  [80]  : " STORAGE_THRESHOLD
-STORAGE_THRESHOLD=${STORAGE_THRESHOLD:-80}
+    read -p "Seuil température °C [70]  : " TEMP_THRESHOLD
+    TEMP_THRESHOLD=${TEMP_THRESHOLD:-70}
 
-read -p "Seuil température °C [70]  : " TEMP_THRESHOLD
-TEMP_THRESHOLD=${TEMP_THRESHOLD:-70}
+    read -p "Temp. critique °C    [85]  : " TEMP_CRITICAL
+    TEMP_CRITICAL=${TEMP_CRITICAL:-85}
 
-read -p "Temp. critique °C    [85]  : " TEMP_CRITICAL
-TEMP_CRITICAL=${TEMP_CRITICAL:-85}
+    echo ""
+    read -p "Nom du serveur surveillé   : " MONITORED_SERVER
 
-echo ""
-read -p "Nom du serveur surveillé   : " MONITORED_SERVER
-
-cat > "$ENV_FILE" <<EOF
+    cat > "$ENV_FILE" <<EOF
 # Configuration email
 SENDER_EMAIL=${SENDER_EMAIL}
 SENDER_PASSWORD=${SENDER_PASSWORD}
@@ -58,10 +56,10 @@ TEMP_CRITICAL=${TEMP_CRITICAL}
 MONITORED_SERVER=${MONITORED_SERVER}
 EOF
 
-chmod 600 "$ENV_FILE"
-
-echo ""
-echo ".env créé avec succès (permissions 600)."
+    chmod 600 "$ENV_FILE"
+    echo ""
+    echo ".env créé avec succès (permissions 600)."
+fi
 
 # Installation du service systemd
 echo ""
