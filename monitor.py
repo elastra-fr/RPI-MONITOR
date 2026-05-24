@@ -149,22 +149,25 @@ def main():
         pass
 
     net_addrs = psutil.net_if_addrs()
-    if 'eth0' in net_addrs:
+
+    def get_ipv4(iface):
+        for addr in net_addrs.get(iface, []):
+            if addr.family == 2:  # AF_INET
+                return addr.address
+        return None
+
+    eth0_ip = get_ipv4('eth0')
+    wlan0_ip = get_ipv4('wlan0')
+
+    if eth0_ip:
         connection_type = 'Ethernet'
-        active_iface = 'eth0'
-    elif 'wlan0' in net_addrs:
+        ip_address = eth0_ip
+    elif wlan0_ip:
         connection_type = 'Wi-Fi'
-        active_iface = 'wlan0'
+        ip_address = wlan0_ip
     else:
         connection_type = 'Inconnu'
-        active_iface = None
-
-    ip_address = 'N/A'
-    if active_iface:
-        for addr in net_addrs[active_iface]:
-            if addr.family == 2:  # AF_INET (IPv4)
-                ip_address = addr.address
-                break
+        ip_address = 'N/A'
 
     initial_message = f"""Le script de surveillance des ressources a démarré.
 Serveur surveillé: {MONITORED_SERVER}    
